@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGOSTOKIGOHUB - Portal</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #12051c;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+            transition: background 0.5s ease-in-out;
+        }
+
+        /* Top Header Bar that appears after login */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(25, 10, 40, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 15px 30px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .top-navbar .logo-text {
+            color: #d4af37;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 18px;
+        }
+
+        .top-navbar .balance-box {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid #d4af37;
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Main Form Container layout */
+        .auth-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            margin-top: 40px;
+        }
+
+        .auth-card {
+            background: rgba(25, 10, 40, 0.85); 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 460px; 
+            border: 1px solid rgba(212, 175, 55, 0.2); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .auth-card h2 {
+            color: #d4af37; 
+            margin-bottom: 20px;
+            font-size: 22px; 
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #e0d5f0;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: none;
+            height: 100px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #d4af37;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Content info blocks */
+        .platform-intro, .payment-details {
+            text-align: left;
+            color: #e0d5f0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .platform-intro ul {
+            margin: 15px 0 15px 20px;
+        }
+
+        .platform-intro li {
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .highlight-gold {
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        .alert-box {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid #d4af37;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        /* Gold gradient buttons */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #b38600 0%, #d4af37 50%, #f3e5ab 100%);
+            border: none;
+            border-radius: 8px;
+            color: #1a0826;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.2s, opacity 0.2s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .form-footer {
+            margin-top: 20px;
+            color: #a395b8;
+            font-size: 13px;
+        }
+
+        .form-footer a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: #ff4a4a;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-navbar" id="topNavbar">
+        <div class="logo-text">AGOSTOKIGOHUB</div>
+        <div class="balance-box">Amount: <span id="accountBalance">Ksh 0</span></div>
+    </div>
+
+    <div class="auth-container" id="authContainer">
+        
+        <div class="auth-card" id="registerCard">
+            <h2>Create Account in Agostokigohub</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email Address</label>
+                    <input type="email" id="regEmail" placeholder="example@mail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="••••••••" required>
+                    <div class="error-message" id="passwordError">Passwords do not match!</div>
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+                <div class="form-footer">
+                    Already have an account? <a onclick="showCard('loginCard')">Login</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="auth-card hidden" id="loginCard">
+            <h2>Welcome Back</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="example@mail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="submit-btn">Log In</button>
+                <div class="form-footer">
+                    Don't have an account yet? <a onclick="showCard('registerCard')">Register</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="auth-card hidden" id="introCard">
+            <h2>Welcome to AGOSTOKIGOHUB</h2>
+            <div class="platform-intro">
+                <p>We provide tasks that you complete and get paid in <span class="highlight-gold">3 days</span>.</p>
+                <p style="margin-top: 10px; font-weight: 600;">Tasks include:</p>
+                <ul>
+                    <li>Chatting with Wazungus</li>
+                    <li>Online writing</li>
+                    <li>Watching and sharing videos</li>
+                </ul>
+                <p>The more you do the tasks, the more you earn. The minimum you can earn is <span class="highlight-gold">600 in 3 days</span> and no task goes beyond 1 hour.</p>
+            </div>
+            <button class="submit-btn" onclick="showCard('activationCard')">Next</button>
+        </div>
+
+        <div class="auth-card hidden" id="activationCard">
+            <h2>Account Activation</h2>
+            <div class="payment-details">
+                <p>Registration fees is 200, but since you are a new subscriber you are required to pay <span class="highlight-gold">100</span>. The other 100 we will cut 120 from your salary.</p>
+                
+                <div class="alert-box">
+                    Thanks, proceed with registration. Please send money to: <br>
+                    <strong class="highlight-gold" style="font-size: 18px;">0769063408</strong>
+                </div>
+
+                <form id="verificationForm">
+                    <div class="form-group">
+                        <label for="paymentMsg">Paste your Mobile Money Payment Message Here:</label>
+                        <textarea id="paymentMsg" placeholder="Paste the confirmation message received after sending payment..." required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Activation</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="auth-card hidden" id="tasksCard">
+            <h2>Available Tasks</h2>
+            <div class="platform-intro" style="text-align: center;">
+                <p style="color: #66ff66; font-size: 18px; font-weight: bold; margin-bottom: 15px;">✓ Payment Received & Verifying</p>
+                <p>Your account activation has been submitted. Tasks will load below once processing completes.</p>
+                <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+                <p style="font-style: italic; font-size: 14px; color: #a395b8;">No new active tasks available during verification.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // DOM Card Elements
+        const cards = {
+            registerCard: document.getElementById('registerCard'),
+            loginCard: document.getElementById('loginCard'),
+            introCard: document.getElementById('introCard'),
+            activationCard: document.getElementById('activationCard'),
+            tasksCard: document.getElementById('tasksCard')
+        };
+        
+        const topNavbar = document.getElementById('topNavbar');
+
+        // Form switching helper
+        function showCard(cardId) {
+            Object.keys(cards).forEach(key => {
+                if (key === cardId) {
+                    cards[key].classList.remove('hidden');
+                } else {
+                    cards[key].classList.add('hidden');
+                }
+            });
+        }
+
+        // Registration Submitting
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const regPassword = document.getElementById('regPassword');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const passwordError = document.getElementById('passwordError');
+            
+            if (regPassword.value !== confirmPassword.value) {
+                passwordError.style.display = 'block';
+                confirmPassword.style.border = '1px solid #ff4a4a';
+                return;
+            }
+            
+            passwordError.style.display = 'none';
+            confirmPassword.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+            
+            document.getElementById('loginEmail').value = document.getElementById('regEmail').value;
+            
+            alert('Successful Registered to Agostokigo.Hub');
+            showCard('loginCard');
+        });
+
+        // Login Submitting -> Turns on Background Artwork & Header
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Load background image locally (Keep your 1000476620.png image inside the same folder)
+            document.body.style.backgroundImage = "url('1000476620.png')";
+
+            // Display top panel displaying balance total
+            topNavbar.style.display = 'flex';
+
+            // Advance view to platform guidelines info page
+            showCard('introCard');
+        });
+
+        // Verification Payment Form Handling
+        document.getElementById('verificationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Payment transaction statement submitted successfully! Admin will verify and activate your tasks.');
+            showCard('tasksCard');
+        });
+
+        // Clear password border mismatches dynamically
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            if (document.getElementById('regPassword').value === this.value) {
+                document.getElementById('passwordError').style.display = 'none';
+                this.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+            }
+        });
+    </script>
+
+</body>
+</html>
