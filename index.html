@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>AGOSTOKIGOHUB</title>
 
 <style>
@@ -389,21 +388,29 @@ Submit Activation
 
 </div>
 
+<!-- SUPABASE -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 
+/* SUPABASE */
+
 const supabaseUrl =
 'https://hcxqakwuqryxqfxipmqb.supabase.co';
 
+/* ADD YOUR REAL ANON PUBLIC KEY BELOW */
+
 const supabaseKey =
-'PASTE_YOUR_ANON_PUBLIC_KEY';
+'PASTE_YOUR_ANON_PUBLIC_KEY_HERE';
 
 const client =
 supabase.createClient(
 supabaseUrl,
 supabaseKey
 );
+
+/* CARDS */
 
 const cards = {
 
