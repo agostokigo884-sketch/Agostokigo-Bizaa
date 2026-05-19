@@ -346,6 +346,10 @@ value="35a4b579-ca27-4961-abd8-e43bd13f9e0f">
 name="subject"
 value="New Activation Request">
 
+<input type="hidden"
+name="from_name"
+value="AGOSTOKIGOHUB">
+
 <div class="form-group">
 
 <label>Full Name</label>
@@ -394,23 +398,17 @@ Submit Activation
 
 <script>
 
-/* SUPABASE */
-
 const supabaseUrl =
 'https://hcxqakwuqryxqfxipmqb.supabase.co';
 
-/* ADD YOUR REAL ANON PUBLIC KEY BELOW */
-
 const supabaseKey =
-'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjeHFha3d1cXJ5eHFmeGlwbXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjI0NzEsImV4cCI6MjA5NDY5ODQ3MX0.n0000puRmXE-1jA4PpnV7rj3QGDDZEDcIMboUUc_5Q4';
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjeHFha3d1cXJ5eHFmeGlwbXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjI0NzEsImV4cCI6MjA5NDY5ODQ3MX0.n0000puRmXE-1jA4PpnV7rj3QGDDZEDcIMboUUc_5Q4';
 
 const client =
 supabase.createClient(
 supabaseUrl,
 supabaseKey
 );
-
-/* CARDS */
 
 const cards = {
 
@@ -600,4 +598,4 @@ checkUser();
 </script>
 
 </body>
-</html>
+  </html>
