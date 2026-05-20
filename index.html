@@ -6,129 +6,101 @@
 <title>AGOSTOKIGOHUB</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
-
 body{
 background:#12051c;
-min-height:100vh;
+font-family:Segoe UI;
 display:flex;
 justify-content:center;
 align-items:center;
-padding:20px;
-}
-
-.top-navbar{
-position:fixed;
-top:0;left:0;right:0;
-display:none;
-justify-content:space-between;
-padding:15px 25px;
-background:rgba(25,10,40,0.9);
+min-height:100vh;
 color:white;
-z-index:100;
 }
 
-.auth-card{
-width:100%;
-max-width:450px;
-background:rgba(25,10,40,0.85);
-padding:35px;
-border-radius:16px;
+.card{
+width:420px;
+background:rgba(25,10,40,0.9);
+padding:25px;
+border-radius:15px;
 }
 
 .hidden{display:none;}
 
-h2{color:#d4af37;text-align:center;margin-bottom:20px;}
-
-input,textarea{
-width:100%;
-padding:12px;
-margin-top:8px;
-border:none;
-border-radius:8px;
-background:rgba(255,255,255,0.08);
-color:white;
-}
-
-button{
+input,button{
 width:100%;
 padding:12px;
 margin-top:10px;
 border:none;
 border-radius:8px;
+}
+
+button{
 background:#d4af37;
 font-weight:bold;
 cursor:pointer;
 }
 
-.link{
-color:#d4af37;
-cursor:pointer;
-text-align:center;
-display:block;
-margin-top:10px;
-font-size:14px;
+a{color:#d4af37;cursor:pointer;font-size:13px;display:block;margin-top:10px;text-align:center;}
+
+.topbar{
+position:fixed;
+top:0;left:0;right:0;
+display:none;
+justify-content:space-between;
+padding:15px;
+background:#1a0826;
 }
 </style>
 </head>
 
 <body>
 
-<!-- NAV -->
-<div class="top-navbar" id="topNavbar">
+<div class="topbar" id="topbar">
 <div>AGOSTOKIGOHUB</div>
 <button onclick="logout()">Logout</button>
 </div>
 
 <!-- REGISTER -->
-<div class="auth-card" id="registerCard">
+<div class="card" id="registerCard">
 <h2>Register</h2>
-
-<input id="regName" placeholder="Full Name">
-<input id="regEmail" placeholder="Email">
-<input id="regPassword" type="password" placeholder="Password">
-<input id="confirmPassword" type="password" placeholder="Confirm Password">
-
+<input id="rname" placeholder="Name">
+<input id="remail" placeholder="Email">
+<input id="rpass" type="password" placeholder="Password">
 <button onclick="register()">Sign Up</button>
 
-<span class="link" onclick="showCard('loginCard')">Already have account? Login</span>
+<a onclick="show('login')">Already have account? Login</a>
 </div>
 
 <!-- LOGIN -->
-<div class="auth-card hidden" id="loginCard">
+<div class="card hidden" id="loginCard">
 <h2>Login</h2>
-
-<input id="loginEmail" placeholder="Email">
-<input id="loginPassword" type="password" placeholder="Password">
-
+<input id="lemail" placeholder="Email">
+<input id="lpass" type="password" placeholder="Password">
 <button onclick="login()">Login</button>
 
-<span class="link" onclick="showCard('registerCard')">Create account</span>
-<span class="link" onclick="showCard('resetCard')">Forgot Password?</span>
+<a onclick="show('register')">Create account</a>
+<a onclick="show('reset')">Forgot Password?</a>
 </div>
 
-<!-- RESET PASSWORD -->
-<div class="auth-card hidden" id="resetCard">
+<!-- RESET -->
+<div class="card hidden" id="resetCard">
 <h2>Reset Password</h2>
-
-<input id="resetEmail" placeholder="Enter your email">
-
-<button onclick="resetPassword()">Send Reset Link</button>
-
-<span class="link" onclick="showCard('loginCard')">Back to Login</span>
+<input id="rem" placeholder="Email">
+<button onclick="resetPass()">Send Reset Link</button>
+<a onclick="show('login')">Back</a>
 </div>
 
-<!-- INTRO -->
-<div class="auth-card hidden" id="introCard">
-<h2>Welcome</h2>
-<p style="color:white;text-align:center;">Login successful</p>
+<!-- USER -->
+<div class="card hidden" id="userCard">
+<h2>Welcome User</h2>
+<p>Login successful</p>
 </div>
 
 <!-- ADMIN -->
-<div class="auth-card hidden" id="adminCard">
+<div class="card hidden" id="adminCard">
 <h2>Admin Dashboard</h2>
-<p style="color:white;">Welcome Admin</p>
-<button onclick="logout()">Logout Admin</button>
+<p>Welcome Admin</p>
+<button onclick="loadUsers()">Load Users</button>
+<div id="users"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -136,79 +108,76 @@ font-size:14px;
 <script>
 const ADMIN_EMAIL = "agostokigo884@gmail.com";
 
-const client = supabase.createClient(
-"https://hcxqakwuqryxqfxipmqb.supabase.co",
-"YOUR_SUPABASE_ANON_KEY"
-);
+const supabaseUrl = "YOUR_PROJECT_URL";
+const supabaseKey = "YOUR_PUBLISHABLE_KEY";
 
-/* NAVIGATION */
-function showCard(id){
-["registerCard","loginCard","resetCard","introCard","adminCard"]
-.forEach(c=>document.getElementById(c).classList.add("hidden"));
+const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-document.getElementById(id).classList.remove("hidden");
+/* NAV */
+function show(page){
+registerCard.classList.add("hidden");
+loginCard.classList.add("hidden");
+resetCard.classList.add("hidden");
+userCard.classList.add("hidden");
+adminCard.classList.add("hidden");
+
+if(page==="login") loginCard.classList.remove("hidden");
+if(page==="register") registerCard.classList.remove("hidden");
+if(page==="reset") resetCard.classList.remove("hidden");
 }
 
 /* REGISTER */
 async function register(){
-
-if(regPassword.value !== confirmPassword.value){
-alert("Passwords do not match");
-return;
-}
-
 const {error} = await client.auth.signUp({
-email: regEmail.value,
-password: regPassword.value,
-options:{data:{full_name: regName.value}}
+email: remail.value,
+password: rpass.value,
+options:{data:{name:rname.value}}
 });
 
 if(error) return alert(error.message);
 
-alert("Registered! Please login");
-showCard("loginCard");
-loginEmail.value = regEmail.value;
+alert("Check email to confirm account");
+show("login");
 }
 
 /* LOGIN */
 async function login(){
-
 const {error} = await client.auth.signInWithPassword({
-email: loginEmail.value,
-password: loginPassword.value
+email: lemail.value,
+password: lpass.value
 });
 
-if(error){
-alert(error.message);
-return;
-}
+if(error) return alert(error.message);
 
-document.body.style.background="#1a0826";
-document.getElementById("topNavbar").style.display="flex";
+document.getElementById("topbar").style.display="flex";
 
-if(loginEmail.value === ADMIN_EMAIL){
-showCard("adminCard");
+const {data:{user}} = await client.auth.getUser();
+
+if(user.email === ADMIN_EMAIL){
+adminCard.classList.remove("hidden");
+loadUsers();
 }else{
-showCard("introCard");
+userCard.classList.remove("hidden");
 }
 }
 
-/* FORGOT PASSWORD */
-async function resetPassword(){
-
-const email = resetEmail.value;
-
-const {error} = await client.auth.resetPasswordForEmail(email, {
+/* RESET PASSWORD */
+async function resetPass(){
+const {error} = await client.auth.resetPasswordForEmail(rem.value,{
 redirectTo: window.location.origin
 });
 
-if(error){
-alert(error.message);
-return;
+if(error) return alert(error.message);
+
+alert("Reset link sent to email");
+show("login");
 }
 
-alert("Password reset link sent to email");
-showCard("loginCard");
+/* LOAD USERS (ADMIN) */
+async function loadUsers(){
+const { data } = await client.auth.admin.listUsers();
+
+users.innerHTML = data.users.map(u=>`<p>${u.email}</p>`).join("");
 }
 
 /* LOGOUT */
@@ -218,22 +187,22 @@ location.reload();
 }
 
 /* AUTO LOGIN */
-async function checkUser(){
-
+async function check(){
 const {data:{user}} = await client.auth.getUser();
 
 if(user){
-document.getElementById("topNavbar").style.display="flex";
+document.getElementById("topbar").style.display="flex";
 
 if(user.email === ADMIN_EMAIL){
-showCard("adminCard");
+adminCard.classList.remove("hidden");
+loadUsers();
 }else{
-showCard("introCard");
+userCard.classList.remove("hidden");
 }
 }
 }
 
-checkUser();
+check();
 </script>
 
 </body>
