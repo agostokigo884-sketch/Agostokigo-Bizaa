@@ -6,12 +6,7 @@
 <title>AGOSTOKIGOHUB</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif;}
 
 body{
 background:#12051c;
@@ -24,25 +19,13 @@ padding:20px;
 
 .top-navbar{
 position:fixed;
-top:0;
-left:0;
-right:0;
+top:0;left:0;right:0;
 display:none;
 justify-content:space-between;
-align-items:center;
 padding:15px 25px;
 background:rgba(25,10,40,0.9);
-border-bottom:1px solid rgba(212,175,55,0.3);
-z-index:100;
 color:white;
-}
-
-.logo-text{ color:#d4af37;font-weight:bold; }
-
-.balance-box{
-border:1px solid #d4af37;
-padding:6px 15px;
-border-radius:20px;
+z-index:100;
 }
 
 .auth-card{
@@ -51,215 +34,123 @@ max-width:450px;
 background:rgba(25,10,40,0.85);
 padding:35px;
 border-radius:16px;
-border:1px solid rgba(212,175,55,0.2);
 }
 
 .hidden{display:none;}
 
-h2{ text-align:center;color:#d4af37;margin-bottom:20px; }
-
-.form-group{margin-bottom:15px;}
-label{color:#eee;display:block;margin-bottom:6px;}
+h2{color:#d4af37;text-align:center;margin-bottom:20px;}
 
 input,textarea{
 width:100%;
 padding:12px;
-border-radius:8px;
+margin-top:8px;
 border:none;
+border-radius:8px;
 background:rgba(255,255,255,0.08);
 color:white;
-outline:none;
 }
 
-textarea{height:90px;}
-
-.submit-btn{
+button{
 width:100%;
-padding:14px;
+padding:12px;
+margin-top:10px;
 border:none;
 border-radius:8px;
-background:linear-gradient(135deg,#b38600,#d4af37,#f3e5ab);
+background:#d4af37;
 font-weight:bold;
 cursor:pointer;
-margin-top:10px;
 }
 
-.form-footer{
+.link{
+color:#d4af37;
+cursor:pointer;
 text-align:center;
-margin-top:12px;
-color:#ccc;
-}
-
-.form-footer a{color:#d4af37;cursor:pointer;}
-
-.alert-box{
-padding:12px;
-background:rgba(212,175,55,0.1);
-border-left:4px solid #d4af37;
-color:white;
+display:block;
+margin-top:10px;
+font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOP NAV -->
+<!-- NAV -->
 <div class="top-navbar" id="topNavbar">
-<div class="logo-text">AGOSTOKIGOHUB</div>
-
-<div style="display:flex;gap:10px;align-items:center;">
-<div class="balance-box">Ksh 0</div>
-<button onclick="logout()" class="submit-btn" style="width:auto;padding:6px 10px;">Logout</button>
-</div>
+<div>AGOSTOKIGOHUB</div>
+<button onclick="logout()">Logout</button>
 </div>
 
 <!-- REGISTER -->
 <div class="auth-card" id="registerCard">
-<h2>Create Account</h2>
+<h2>Register</h2>
 
-<form id="registerForm">
-<div class="form-group">
-<label>Full Name</label>
-<input type="text" id="regName" required>
-</div>
+<input id="regName" placeholder="Full Name">
+<input id="regEmail" placeholder="Email">
+<input id="regPassword" type="password" placeholder="Password">
+<input id="confirmPassword" type="password" placeholder="Confirm Password">
 
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="regEmail" required>
-</div>
+<button onclick="register()">Sign Up</button>
 
-<div class="form-group">
-<label>Password</label>
-<input type="password" id="regPassword" required>
-</div>
-
-<div class="form-group">
-<label>Confirm Password</label>
-<input type="password" id="confirmPassword" required>
-</div>
-
-<button class="submit-btn">Sign Up</button>
-
-<div class="form-footer">
-Already have account?
-<a onclick="showCard('loginCard')">Login</a>
-</div>
-</form>
+<span class="link" onclick="showCard('loginCard')">Already have account? Login</span>
 </div>
 
 <!-- LOGIN -->
 <div class="auth-card hidden" id="loginCard">
 <h2>Login</h2>
 
-<form id="loginForm">
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="loginEmail" required>
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<span class="link" onclick="showCard('registerCard')">Create account</span>
+<span class="link" onclick="showCard('resetCard')">Forgot Password?</span>
 </div>
 
-<div class="form-group">
-<label>Password</label>
-<input type="password" id="loginPassword" required>
-</div>
+<!-- RESET PASSWORD -->
+<div class="auth-card hidden" id="resetCard">
+<h2>Reset Password</h2>
 
-<button class="submit-btn">Log In</button>
+<input id="resetEmail" placeholder="Enter your email">
 
-<div class="form-footer">
-No account?
-<a onclick="showCard('registerCard')">Register</a>
-</div>
-</form>
+<button onclick="resetPassword()">Send Reset Link</button>
+
+<span class="link" onclick="showCard('loginCard')">Back to Login</span>
 </div>
 
 <!-- INTRO -->
 <div class="auth-card hidden" id="introCard">
 <h2>Welcome</h2>
-<p style="color:white;text-align:center;">
-Complete tasks and earn rewards
-</p>
-
-<button class="submit-btn" onclick="showCard('activationCard')">
-Continue
-</button>
-</div>
-
-<!-- ACTIVATION -->
-<div class="auth-card hidden" id="activationCard">
-<h2>Activation</h2>
-
-<div class="alert-box">
-Send activation fee to:<br><br>
-<b>0769063408</b>
-</div>
-
-<form id="activationForm">
-<div class="form-group">
-<label>Full Name</label>
-<input type="text" id="actName" required>
-</div>
-
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="actEmail" required>
-</div>
-
-<div class="form-group">
-<label>Mpesa Message</label>
-<textarea id="actMessage" required></textarea>
-</div>
-
-<button class="submit-btn">Submit</button>
-</form>
+<p style="color:white;text-align:center;">Login successful</p>
 </div>
 
 <!-- ADMIN -->
 <div class="auth-card hidden" id="adminCard">
 <h2>Admin Dashboard</h2>
-
-<button class="submit-btn" onclick="loadData()">Refresh</button>
-
-<h3 style="color:#d4af37;margin-top:15px;">Users</h3>
-<div id="usersList" style="color:white;font-size:14px;"></div>
-
-<h3 style="color:#d4af37;margin-top:15px;">Payments</h3>
-<div id="paymentsList" style="color:white;font-size:14px;"></div>
-
-<button class="submit-btn" onclick="logout()">Logout Admin</button>
+<p style="color:white;">Welcome Admin</p>
+<button onclick="logout()">Logout Admin</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-const ADMIN_EMAIL = "youradmin@gmail.com";
-
-const supabase = window.supabase;
+const ADMIN_EMAIL = "agostokigo884@gmail.com";
 
 const client = supabase.createClient(
 "https://hcxqakwuqryxqfxipmqb.supabase.co",
 "YOUR_SUPABASE_ANON_KEY"
 );
 
-const cards = {
-registerCard,
-loginCard,
-introCard,
-activationCard,
-adminCard
-};
-
-const topNavbar = document.getElementById("topNavbar");
-
-/* SWITCH CARDS */
+/* NAVIGATION */
 function showCard(id){
-Object.keys(cards).forEach(c=>{
-cards[c].classList.add("hidden");
-});
-cards[id].classList.remove("hidden");
+["registerCard","loginCard","resetCard","introCard","adminCard"]
+.forEach(c=>document.getElementById(c).classList.add("hidden"));
+
+document.getElementById(id).classList.remove("hidden");
 }
 
 /* REGISTER */
-registerForm.addEventListener("submit", async (e)=>{
-e.preventDefault();
+async function register(){
 
 if(regPassword.value !== confirmPassword.value){
 alert("Passwords do not match");
@@ -274,75 +165,50 @@ options:{data:{full_name: regName.value}}
 
 if(error) return alert(error.message);
 
-alert("Registered successfully");
+alert("Registered! Please login");
 showCard("loginCard");
 loginEmail.value = regEmail.value;
-});
+}
 
 /* LOGIN */
-loginForm.addEventListener("submit", async (e)=>{
-e.preventDefault();
+async function login(){
 
 const {error} = await client.auth.signInWithPassword({
 email: loginEmail.value,
 password: loginPassword.value
 });
 
-if(error) return alert(error.message);
+if(error){
+alert(error.message);
+return;
+}
 
 document.body.style.background="#1a0826";
-topNavbar.style.display="flex";
+document.getElementById("topNavbar").style.display="flex";
 
 if(loginEmail.value === ADMIN_EMAIL){
 showCard("adminCard");
-loadData();
 }else{
 showCard("introCard");
 }
+}
+
+/* FORGOT PASSWORD */
+async function resetPassword(){
+
+const email = resetEmail.value;
+
+const {error} = await client.auth.resetPasswordForEmail(email, {
+redirectTo: window.location.origin
 });
-
-/* ACTIVATION -> SAVE TO SUPABASE */
-activationForm.addEventListener("submit", async (e)=>{
-e.preventDefault();
-
-const {error} = await client
-.from("payments")
-.insert([{
-full_name: actName.value,
-email: actEmail.value,
-message: actMessage.value
-}]);
 
 if(error){
 alert(error.message);
 return;
 }
 
-alert("Submitted successfully");
-showCard("introCard");
-});
-
-/* LOAD ADMIN DATA */
-async function loadData(){
-
-const { data: users } = await client.auth.admin.listUsers();
-
-const { data: payments } = await client
-.from("payments")
-.select("*")
-.order("created_at",{ascending:false});
-
-usersList.innerHTML = users.users.map(u =>
-`<p>📧 ${u.email}</p>`
-).join("");
-
-paymentsList.innerHTML = payments.map(p =>
-`<div style="border-bottom:1px solid #333;padding:6px 0">
-<b>${p.full_name}</b><br>
-${p.email}<br>
-${p.message}
-</div>`
-).join("");
+alert("Password reset link sent to email");
+showCard("loginCard");
 }
 
 /* LOGOUT */
@@ -353,15 +219,14 @@ location.reload();
 
 /* AUTO LOGIN */
 async function checkUser(){
+
 const {data:{user}} = await client.auth.getUser();
 
 if(user){
-document.body.style.background="#1a0826";
-topNavbar.style.display="flex";
+document.getElementById("topNavbar").style.display="flex";
 
 if(user.email === ADMIN_EMAIL){
 showCard("adminCard");
-loadData();
 }else{
 showCard("introCard");
 }
