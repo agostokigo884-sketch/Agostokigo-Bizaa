@@ -48,6 +48,7 @@ display:none;
 justify-content:space-between;
 padding:15px;
 background:#1a0826;
+color:white;
 }
 </style>
 </head>
@@ -62,9 +63,11 @@ background:#1a0826;
 <!-- REGISTER -->
 <div class="card" id="registerCard">
 <h2>Register</h2>
+
 <input id="rname" placeholder="Name">
 <input id="remail" placeholder="Email">
 <input id="rpass" type="password" placeholder="Password">
+
 <button onclick="register()">Sign Up</button>
 
 <a onclick="show('login')">Already have account? Login</a>
@@ -73,8 +76,10 @@ background:#1a0826;
 <!-- LOGIN -->
 <div class="card hidden" id="loginCard">
 <h2>Login</h2>
+
 <input id="lemail" placeholder="Email">
 <input id="lpass" type="password" placeholder="Password">
+
 <button onclick="login()">Login</button>
 
 <a onclick="show('register')">Create account</a>
@@ -84,21 +89,24 @@ background:#1a0826;
 <!-- RESET -->
 <div class="card hidden" id="resetCard">
 <h2>Reset Password</h2>
+
 <input id="rem" placeholder="Email">
 <button onclick="resetPass()">Send Reset Link</button>
+
 <a onclick="show('login')">Back</a>
 </div>
 
 <!-- USER -->
 <div class="card hidden" id="userCard">
 <h2>Welcome User</h2>
-<p>Login successful</p>
+<p>Login successful 🎉</p>
 </div>
 
 <!-- ADMIN -->
 <div class="card hidden" id="adminCard">
 <h2>Admin Dashboard</h2>
-<p>Welcome Admin</p>
+<p>Welcome Admin 🔐</p>
+
 <button onclick="loadUsers()">Load Users</button>
 <div id="users"></div>
 </div>
@@ -108,12 +116,14 @@ background:#1a0826;
 <script>
 const ADMIN_EMAIL = "agostokigo884@gmail.com";
 
-const supabaseUrl = "YOUR_PROJECT_URL";
-const supabaseKey = "YOUR_PUBLISHABLE_KEY";
+/* ✅ YOUR SUPABASE CONNECTION */
+const supabaseUrl = "https://hcxqakwuqryxqfxipmqb.supabase.co";
+
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjeHFha3d1cXJ5eHFmeGlwbXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjI0NzEsImV4cCI6MjA5NDY5ODQ3MX0.n0000puRmXE-1jA4PpnV7rj3QGDDZEDcIMboUUc_5Q4";
 
 const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* NAV */
+/* NAVIGATION */
 function show(page){
 registerCard.classList.add("hidden");
 loginCard.classList.add("hidden");
@@ -128,26 +138,34 @@ if(page==="reset") resetCard.classList.remove("hidden");
 
 /* REGISTER */
 async function register(){
+
 const {error} = await client.auth.signUp({
 email: remail.value,
 password: rpass.value,
 options:{data:{name:rname.value}}
 });
 
-if(error) return alert(error.message);
+if(error){
+alert(error.message);
+return;
+}
 
-alert("Check email to confirm account");
+alert("Registered successfully ✔ Please login");
 show("login");
 }
 
 /* LOGIN */
 async function login(){
+
 const {error} = await client.auth.signInWithPassword({
 email: lemail.value,
 password: lpass.value
 });
 
-if(error) return alert(error.message);
+if(error){
+alert(error.message);
+return;
+}
 
 document.getElementById("topbar").style.display="flex";
 
@@ -163,21 +181,28 @@ userCard.classList.remove("hidden");
 
 /* RESET PASSWORD */
 async function resetPass(){
+
 const {error} = await client.auth.resetPasswordForEmail(rem.value,{
 redirectTo: window.location.origin
 });
 
-if(error) return alert(error.message);
+if(error){
+alert(error.message);
+return;
+}
 
-alert("Reset link sent to email");
+alert("Reset link sent to email ✔");
 show("login");
 }
 
-/* LOAD USERS (ADMIN) */
+/* LOAD USERS (ADMIN ONLY) */
 async function loadUsers(){
+
 const { data } = await client.auth.admin.listUsers();
 
-users.innerHTML = data.users.map(u=>`<p>${u.email}</p>`).join("");
+users.innerHTML = data.users.map(u => `
+<p>📧 ${u.email}</p>
+`).join("");
 }
 
 /* LOGOUT */
@@ -188,6 +213,7 @@ location.reload();
 
 /* AUTO LOGIN */
 async function check(){
+
 const {data:{user}} = await client.auth.getUser();
 
 if(user){
