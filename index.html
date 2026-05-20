@@ -25,7 +25,7 @@ border-radius:15px;
 
 .hidden{display:none;}
 
-input,button{
+input,button,textarea{
 width:100%;
 padding:12px;
 margin-top:10px;
@@ -48,7 +48,6 @@ display:none;
 justify-content:space-between;
 padding:15px;
 background:#1a0826;
-color:white;
 }
 </style>
 </head>
@@ -63,25 +62,19 @@ color:white;
 <!-- REGISTER -->
 <div class="card" id="registerCard">
 <h2>Register</h2>
-
 <input id="rname" placeholder="Name">
 <input id="remail" placeholder="Email">
 <input id="rpass" type="password" placeholder="Password">
-
 <button onclick="register()">Sign Up</button>
-
 <a onclick="show('login')">Already have account? Login</a>
 </div>
 
 <!-- LOGIN -->
 <div class="card hidden" id="loginCard">
 <h2>Login</h2>
-
 <input id="lemail" placeholder="Email">
 <input id="lpass" type="password" placeholder="Password">
-
 <button onclick="login()">Login</button>
-
 <a onclick="show('register')">Create account</a>
 <a onclick="show('reset')">Forgot Password?</a>
 </div>
@@ -89,26 +82,33 @@ color:white;
 <!-- RESET -->
 <div class="card hidden" id="resetCard">
 <h2>Reset Password</h2>
-
 <input id="rem" placeholder="Email">
 <button onclick="resetPass()">Send Reset Link</button>
-
 <a onclick="show('login')">Back</a>
 </div>
 
-<!-- USER -->
+<!-- USER DASHBOARD -->
 <div class="card hidden" id="userCard">
-<h2>Welcome User</h2>
-<p>Login successful 🎉</p>
+<h2>User Dashboard</h2>
+
+<p id="userEmail"></p>
+
+<h3>Submit Payment</h3>
+<textarea id="payMsg" placeholder="Mpesa message"></textarea>
+<button onclick="sendPayment()">Submit</button>
 </div>
 
-<!-- ADMIN -->
+<!-- ADMIN DASHBOARD -->
 <div class="card hidden" id="adminCard">
 <h2>Admin Dashboard</h2>
-<p>Welcome Admin 🔐</p>
 
-<button onclick="loadUsers()">Load Users</button>
+<button onclick="loadData()">Refresh Data</button>
+
+<h3>Users</h3>
 <div id="users"></div>
+
+<h3>Payments</h3>
+<div id="payments"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -116,14 +116,12 @@ color:white;
 <script>
 const ADMIN_EMAIL = "agostokigo884@gmail.com";
 
-/* ✅ YOUR SUPABASE CONNECTION */
 const supabaseUrl = "https://hcxqakwuqryxqfxipmqb.supabase.co";
-
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjeHFha3d1cXJ5eHFmeGlwbXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjI0NzEsImV4cCI6MjA5NDY5ODQ3MX0.n0000puRmXE-1jA4PpnV7rj3QGDDZEDcIMboUUc_5Q4";
+const supabaseKey = "YOUR_ANON_KEY_HERE";
 
 const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* NAVIGATION */
+/* NAV */
 function show(page){
 registerCard.classList.add("hidden");
 loginCard.classList.add("hidden");
@@ -138,42 +136,49 @@ if(page==="reset") resetCard.classList.remove("hidden");
 
 /* REGISTER */
 async function register(){
-
-const {error} = await client.auth.signUp({
+const { data, error } = await client.auth.signUp({
 email: remail.value,
 password: rpass.value,
 options:{data:{name:rname.value}}
 });
 
-if(error){
-alert(error.message);
-return;
-}
+if(error) return alert(error.message);
 
-alert("Registered successfully ✔ Please login");
+alert("Check email to confirm");
+
+await client.from("profiles").insert({
+id: data.user.id,
+email: remail.value,
+role: "user"
+});
+
 show("login");
 }
 
 /* LOGIN */
 async function login(){
-
-const {error} = await client.auth.signInWithPassword({
+const { data, error } = await client.auth.signInWithPassword({
 email: lemail.value,
 password: lpass.value
 });
 
-if(error){
-alert(error.message);
-return;
-}
+if(error) return alert(error.message);
+
+const user = data.user;
 
 document.getElementById("topbar").style.display="flex";
+userEmail.innerText = user.email;
 
-const {data:{user}} = await client.auth.getUser();
+/* check role */
+const { data: profile } = await client
+.from("profiles")
+.select("*")
+.eq("id", user.id)
+.single();
 
-if(user.email === ADMIN_EMAIL){
+if(profile?.role === "admin" || user.email === ADMIN_EMAIL){
 adminCard.classList.remove("hidden");
-loadUsers();
+loadData();
 }else{
 userCard.classList.remove("hidden");
 }
@@ -181,27 +186,40 @@ userCard.classList.remove("hidden");
 
 /* RESET PASSWORD */
 async function resetPass(){
+const { error } = await client.auth.resetPasswordForEmail(rem.value);
+if(error) return alert(error.message);
 
-const {error} = await client.auth.resetPasswordForEmail(rem.value,{
-redirectTo: window.location.origin
-});
-
-if(error){
-alert(error.message);
-return;
-}
-
-alert("Reset link sent to email ✔");
+alert("Reset link sent");
 show("login");
 }
 
-/* LOAD USERS (ADMIN ONLY) */
-async function loadUsers(){
+/* SEND PAYMENT */
+async function sendPayment(){
+const { data: { user } } = await client.auth.getUser();
 
-const { data } = await client.auth.admin.listUsers();
+const { error } = await client.from("payments").insert({
+email: user.email,
+full_name: user.email,
+message: payMsg.value
+});
 
-users.innerHTML = data.users.map(u => `
-<p>📧 ${u.email}</p>
+if(error) return alert(error.message);
+
+alert("Payment submitted");
+}
+
+/* LOAD ADMIN DATA */
+async function loadData(){
+
+const { data: usersData } = await client.from("profiles").select("*");
+const { data: payData } = await client.from("payments").select("*");
+
+users.innerHTML = usersData.map(u=>`
+<p>📧 ${u.email} (${u.role})</p>
+`).join("");
+
+payments.innerHTML = payData.map(p=>`
+<p><b>${p.email}</b><br>${p.message}</p>
 `).join("");
 }
 
@@ -213,15 +231,23 @@ location.reload();
 
 /* AUTO LOGIN */
 async function check(){
+const { data: { session } } = await client.auth.getSession();
 
-const {data:{user}} = await client.auth.getUser();
+if(session){
+const user = session.user;
 
-if(user){
 document.getElementById("topbar").style.display="flex";
+userEmail.innerText = user.email;
 
-if(user.email === ADMIN_EMAIL){
+const { data: profile } = await client
+.from("profiles")
+.select("*")
+.eq("id", user.id)
+.single();
+
+if(profile?.role === "admin" || user.email === ADMIN_EMAIL){
 adminCard.classList.remove("hidden");
-loadUsers();
+loadData();
 }else{
 userCard.classList.remove("hidden");
 }
