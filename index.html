@@ -6,255 +6,633 @@
 <title>AGOSTOKIGOHUB</title>
 
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
 body{
-background:#12051c;
-font-family:Segoe UI;
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-min-height:100vh;
+padding:20px;
+overflow-x:hidden;
+
+/* YOUR BACKGROUND IMAGE */
+background:
+linear-gradient(rgba(10,0,20,0.75),rgba(10,0,20,0.85)),
+url('1000476620.png');
+
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
 color:white;
 }
 
-.card{
-width:420px;
-background:rgba(25,10,40,0.9);
-padding:25px;
-border-radius:15px;
+/* TOPBAR */
+.topbar{
+position:fixed;
+top:0;
+left:0;
+right:0;
+height:60px;
+display:none;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+background:rgba(20,0,35,0.9);
+backdrop-filter:blur(8px);
+z-index:1000;
+border-bottom:1px solid rgba(255,215,0,0.2);
 }
 
-.hidden{display:none;}
-
-input,button,textarea{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:8px;
-}
-
-button{
-background:#d4af37;
+.logo{
+font-size:20px;
 font-weight:bold;
+color:#d4af37;
+}
+
+.logout-btn{
+width:auto;
+padding:10px 18px;
+background:#d4af37;
+color:black;
+font-weight:bold;
+border:none;
+border-radius:10px;
 cursor:pointer;
 }
 
-a{color:#d4af37;cursor:pointer;font-size:13px;display:block;margin-top:10px;text-align:center;}
-
-.topbar{
-position:fixed;
-top:0;left:0;right:0;
-display:none;
-justify-content:space-between;
-padding:15px;
-background:#1a0826;
+/* CARD */
+.card{
+width:100%;
+max-width:420px;
+background:rgba(25,10,40,0.88);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:20px;
+box-shadow:0 0 25px rgba(0,0,0,0.5);
+border:1px solid rgba(255,215,0,0.15);
+margin-top:60px;
+animation:fade 0.4s ease;
 }
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.hidden{
+display:none;
+}
+
+h2,h3{
+text-align:center;
+margin-bottom:15px;
+color:#d4af37;
+}
+
+/* INPUTS */
+input,
+textarea,
+button{
+width:100%;
+padding:13px;
+margin-top:12px;
+border:none;
+border-radius:12px;
+font-size:15px;
+}
+
+input,
+textarea{
+background:rgba(255,255,255,0.08);
+color:white;
+outline:none;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+input::placeholder,
+textarea::placeholder{
+color:#ccc;
+}
+
+textarea{
+resize:none;
+min-height:120px;
+}
+
+/* BUTTON */
+button{
+background:#d4af37;
+color:black;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.02);
+opacity:0.92;
+}
+
+/* LINKS */
+a{
+display:block;
+text-align:center;
+margin-top:14px;
+font-size:14px;
+color:#d4af37;
+cursor:pointer;
+text-decoration:none;
+}
+
+/* DASHBOARD BOXES */
+.data-box{
+background:rgba(255,255,255,0.06);
+padding:14px;
+margin-top:12px;
+border-radius:12px;
+font-size:14px;
+word-break:break-word;
+border:1px solid rgba(255,255,255,0.05);
+}
+
+/* USER EMAIL */
+#userEmail{
+text-align:center;
+margin-bottom:15px;
+font-size:14px;
+color:#ddd;
+}
+
+/* MOBILE */
+@media(max-width:480px){
+
+body{
+padding:14px;
+}
+
+.card{
+padding:20px;
+border-radius:16px;
+}
+
+.logo{
+font-size:16px;
+}
+
+.logout-btn{
+padding:8px 14px;
+font-size:13px;
+}
+
+input,
+textarea,
+button{
+font-size:14px;
+padding:12px;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar" id="topbar">
-<div>AGOSTOKIGOHUB</div>
-<button onclick="logout()">Logout</button>
+
+<div class="logo">
+AGOSTOKIGOHUB
+</div>
+
+<button class="logout-btn" onclick="logout()">
+Logout
+</button>
+
 </div>
 
 <!-- REGISTER -->
 <div class="card" id="registerCard">
-<h2>Register</h2>
-<input id="rname" placeholder="Name">
-<input id="remail" placeholder="Email">
+
+<h2>Create Account</h2>
+
+<input id="rname" type="text" placeholder="Full Name">
+
+<input id="remail" type="email" placeholder="Email">
+
 <input id="rpass" type="password" placeholder="Password">
-<button onclick="register()">Sign Up</button>
-<a onclick="show('login')">Already have account? Login</a>
+
+<button onclick="register()">
+Sign Up
+</button>
+
+<a onclick="show('login')">
+Already have account? Login
+</a>
+
 </div>
 
 <!-- LOGIN -->
 <div class="card hidden" id="loginCard">
+
 <h2>Login</h2>
-<input id="lemail" placeholder="Email">
+
+<input id="lemail" type="email" placeholder="Email">
+
 <input id="lpass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<a onclick="show('register')">Create account</a>
-<a onclick="show('reset')">Forgot Password?</a>
+
+<button onclick="login()">
+Login
+</button>
+
+<a onclick="show('register')">
+Create Account
+</a>
+
+<a onclick="show('reset')">
+Forgot Password?
+</a>
+
 </div>
 
 <!-- RESET -->
 <div class="card hidden" id="resetCard">
+
 <h2>Reset Password</h2>
-<input id="rem" placeholder="Email">
-<button onclick="resetPass()">Send Reset Link</button>
-<a onclick="show('login')">Back</a>
+
+<input id="resetEmail" type="email" placeholder="Enter Email">
+
+<button onclick="resetPass()">
+Send Reset Link
+</button>
+
+<a onclick="show('login')">
+Back To Login
+</a>
+
 </div>
 
 <!-- USER DASHBOARD -->
 <div class="card hidden" id="userCard">
+
 <h2>User Dashboard</h2>
 
 <p id="userEmail"></p>
 
 <h3>Submit Payment</h3>
-<textarea id="payMsg" placeholder="Mpesa message"></textarea>
-<button onclick="sendPayment()">Submit</button>
+
+<textarea id="payMsg"
+placeholder="Paste Mpesa Message Here">
+</textarea>
+
+<button onclick="sendPayment()">
+Submit Payment
+</button>
+
 </div>
 
 <!-- ADMIN DASHBOARD -->
 <div class="card hidden" id="adminCard">
+
 <h2>Admin Dashboard</h2>
 
-<button onclick="loadData()">Refresh Data</button>
+<button onclick="loadData()">
+Refresh Data
+</button>
 
 <h3>Users</h3>
+
 <div id="users"></div>
 
 <h3>Payments</h3>
+
 <div id="payments"></div>
+
 </div>
 
+<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-const ADMIN_EMAIL = "agostokigo884@gmail.com";
 
-const supabaseUrl = "https://hcxqakwuqryxqfxipmqb.supabase.co";
-const supabaseKey = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjeHFha3d1cXJ5eHFmeGlwbXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjI0NzEsImV4cCI6MjA5NDY5ODQ3MX0.n0000puRmXE-1jA4PpnV7rj3QGDDZEDcIMboUUc_5Q4;
+/* ADMIN EMAIL */
+const ADMIN_EMAIL =
+"agostokigo884@gmail.com";
 
-const client = supabase.createClient(supabaseUrl, supabaseKey);
+/* SUPABASE */
+const supabaseUrl =
+"https://hcxqakwuqryxqfxipmqb.supabase.co";
 
-/* NAV */
+const supabaseKey =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjeHFha3d1cXJ5eHFmeGlwbXFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjI0NzEsImV4cCI6MjA5NDY5ODQ3MX0.n0000puRmXE-1jA4PpnV7rj3QGDDZEDcIMboUUc_5Q4";
+
+const client =
+supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
+
+/* PAGE SWITCH */
 function show(page){
+
 registerCard.classList.add("hidden");
 loginCard.classList.add("hidden");
 resetCard.classList.add("hidden");
 userCard.classList.add("hidden");
 adminCard.classList.add("hidden");
 
-if(page==="login") loginCard.classList.remove("hidden");
-if(page==="register") registerCard.classList.remove("hidden");
-if(page==="reset") resetCard.classList.remove("hidden");
+if(page==="register"){
+registerCard.classList.remove("hidden");
+}
+
+if(page==="login"){
+loginCard.classList.remove("hidden");
+}
+
+if(page==="reset"){
+resetCard.classList.remove("hidden");
+}
+
 }
 
 /* REGISTER */
 async function register(){
-const { data, error } = await client.auth.signUp({
-email: remail.value,
-password: rpass.value,
-options:{data:{name:rname.value}}
+
+const name = rname.value.trim();
+const email = remail.value.trim();
+const password = rpass.value.trim();
+
+if(!name || !email || !password){
+
+alert("Fill all fields");
+
+return;
+
+}
+
+const { data,error } =
+await client.auth.signUp({
+
+email,
+password,
+
+options:{
+data:{name}
+}
+
 });
 
-if(error) return alert(error.message);
+if(error){
 
-alert("Check email to confirm");
+alert(error.message);
 
-await client.from("profiles").insert({
-id: data.user.id,
-email: remail.value,
-role: "user"
+return;
+
+}
+
+/* SAVE PROFILE */
+await client.from("profiles")
+.insert({
+
+id:data.user.id,
+email:email,
+role:"user"
+
 });
+
+alert("Account created successfully");
 
 show("login");
+
 }
 
 /* LOGIN */
 async function login(){
-const { data, error } = await client.auth.signInWithPassword({
-email: lemail.value,
-password: lpass.value
+
+const email = lemail.value.trim();
+const password = lpass.value.trim();
+
+const { data,error } =
+await client.auth.signInWithPassword({
+
+email,
+password
+
 });
 
-if(error) return alert(error.message);
+if(error){
 
-const user = data.user;
+alert(error.message);
 
-document.getElementById("topbar").style.display="flex";
-userEmail.innerText = user.email;
+return;
 
-/* check role */
-const { data: profile } = await client
-.from("profiles")
-.select("*")
-.eq("id", user.id)
-.single();
-
-if(profile?.role === "admin" || user.email === ADMIN_EMAIL){
-adminCard.classList.remove("hidden");
-loadData();
-}else{
-userCard.classList.remove("hidden");
 }
+
+openDashboard(data.user);
+
 }
 
 /* RESET PASSWORD */
 async function resetPass(){
-const { error } = await client.auth.resetPasswordForEmail(rem.value);
-if(error) return alert(error.message);
 
-alert("Reset link sent");
+const email =
+resetEmail.value.trim();
+
+const { error } =
+await client.auth
+.resetPasswordForEmail(email);
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+alert("Reset email sent");
+
 show("login");
+
+}
+
+/* OPEN DASHBOARD */
+async function openDashboard(user){
+
+topbar.style.display="flex";
+
+userEmail.innerText =
+"Logged in as: " + user.email;
+
+const { data:profile } =
+await client
+.from("profiles")
+.select("*")
+.eq("id",user.id)
+.single();
+
+/* ADMIN */
+if(
+profile?.role==="admin" ||
+user.email===ADMIN_EMAIL
+){
+
+adminCard.classList.remove("hidden");
+
+loadData();
+
+}else{
+
+userCard.classList.remove("hidden");
+
+}
+
 }
 
 /* SEND PAYMENT */
 async function sendPayment(){
-const { data: { user } } = await client.auth.getUser();
 
-const { error } = await client.from("payments").insert({
-email: user.email,
-full_name: user.email,
-message: payMsg.value
+const msg =
+payMsg.value.trim();
+
+if(!msg){
+
+alert("Enter payment message");
+
+return;
+
+}
+
+const {
+data:{user}
+} =
+await client.auth.getUser();
+
+const { error } =
+await client.from("payments")
+.insert({
+
+email:user.email,
+full_name:user.email,
+message:msg
+
 });
 
-if(error) return alert(error.message);
+if(error){
+
+alert(error.message);
+
+return;
+
+}
 
 alert("Payment submitted");
+
+payMsg.value="";
+
 }
 
 /* LOAD ADMIN DATA */
 async function loadData(){
 
-const { data: usersData } = await client.from("profiles").select("*");
-const { data: payData } = await client.from("payments").select("*");
+const { data:usersData } =
+await client
+.from("profiles")
+.select("*");
 
-users.innerHTML = usersData.map(u=>`
-<p>📧 ${u.email} (${u.role})</p>
-`).join("");
+const { data:payData } =
+await client
+.from("payments")
+.select("*")
+.order("id",{ascending:false});
 
-payments.innerHTML = payData.map(p=>`
-<p><b>${p.email}</b><br>${p.message}</p>
-`).join("");
+/* USERS */
+users.innerHTML="";
+
+usersData.forEach(user=>{
+
+users.innerHTML += `
+
+<div class="data-box">
+
+📧 ${user.email}
+<br><br>
+
+👤 Role:
+${user.role}
+
+</div>
+
+`;
+
+});
+
+/* PAYMENTS */
+payments.innerHTML="";
+
+payData.forEach(pay=>{
+
+payments.innerHTML += `
+
+<div class="data-box">
+
+<b>${pay.email}</b>
+
+<br><br>
+
+${pay.message}
+
+</div>
+
+`;
+
+});
+
 }
 
 /* LOGOUT */
 async function logout(){
+
 await client.auth.signOut();
+
 location.reload();
+
 }
 
 /* AUTO LOGIN */
-async function check(){
-const { data: { session } } = await client.auth.getSession();
+async function checkSession(){
+
+const {
+data:{session}
+} =
+await client.auth.getSession();
 
 if(session){
-const user = session.user;
 
-document.getElementById("topbar").style.display="flex";
-userEmail.innerText = user.email;
+registerCard.classList.add("hidden");
+loginCard.classList.add("hidden");
 
-const { data: profile } = await client
-.from("profiles")
-.select("*")
-.eq("id", user.id)
-.single();
+openDashboard(session.user);
 
-if(profile?.role === "admin" || user.email === ADMIN_EMAIL){
-adminCard.classList.remove("hidden");
-loadData();
-}else{
-userCard.classList.remove("hidden");
-}
-}
 }
 
-check();
+}
+
+checkSession();
+
 </script>
 
 </body>
